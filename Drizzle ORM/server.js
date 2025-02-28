@@ -15,7 +15,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/shorten", shortenerRoutes);
-app.use("/auth", authRoutes);
+app.use("/", authRoutes);
 
 try {
   // await connectDB();
