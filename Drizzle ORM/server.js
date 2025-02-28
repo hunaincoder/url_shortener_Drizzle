@@ -1,10 +1,8 @@
 import express from "express";
-import 'dotenv/config';
-import {
-  postURLShortener,
-  getShortenerPage,
-  redirectToShortLink,
-} from "./controller/url-shortenener.controller.js";
+import "dotenv/config";
+import { shortenerRoutes } from "./routes/shortener.routes.js";
+import { authRoutes } from "./routes/auth.routes.js";
+
 // import { connectDB } from "./config/db-client.js";
 const app = express();
 
@@ -16,11 +14,6 @@ app.set("views", "./views");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", getShortenerPage);
-
-app.post("/", postURLShortener);
-
-app.get("/:shortcode", redirectToShortLink);
 app.use("/shorten", shortenerRoutes);
 app.use("/auth", authRoutes);
 
@@ -32,4 +25,3 @@ try {
 } catch (error) {
   console.error(error);
 }
-
