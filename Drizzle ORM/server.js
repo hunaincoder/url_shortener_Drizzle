@@ -21,6 +21,9 @@ app.get("/", getShortenerPage);
 app.post("/", postURLShortener);
 
 app.get("/:shortcode", redirectToShortLink);
+app.use("/shorten", shortenerRoutes);
+app.use("/auth", authRoutes);
+
 try {
   // await connectDB();
   app.listen(port, () => {
