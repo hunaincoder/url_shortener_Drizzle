@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <%- include('./partials/header') %>
+    <% if(isLoggedIn) { %>
+    <h2>you are logged in </h2>
+    <% } else { %>
+    <h2>you are not loged in </h2>
+    <% }%>
     <div class="container">
       <h1>URL Shortener</h1>
       <form action="/" method="post">
@@ -81,5 +87,7 @@
 
       fetchShortenedURL();
     </script> -->
+    <%- include('./partials/footer') %>
+
   </body>
 </html>
