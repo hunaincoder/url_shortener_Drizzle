@@ -14,22 +14,17 @@ import {
 
 export const getShortenerPage = async (req, res) => {
   try {
+    console.log("User in getShortenerPage:", res.locals.user); // Debugging
+
     // const link = await loadLinks();
     const link = await getAllShortLinks();
 
-    // let isLoggedIn = req.headers.cookie;
-    // isLoggedIn = Boolean(
-    //   isLoggedIn
-    //     ?.split(";")
-    //     ?.find((cookie) => cookie.trim().startsWith("isLoggedIn"))
-    //     ?.split("=")[1]
-    // );
-    // console.log("cookie = ", isLoggedIn);
+      
 
-    let isLoggedIn = req.cookies.isLoggedIn;
+    // let isLoggedIn = req.cookies.isLoggedIn;
 
     // const links = await urls.find();
-    return res.render("index", { link, host: req.hostname, isLoggedIn });
+    return res.render("index", { link, host: req.hostname, user: res.locals.user });
   } catch (error) {
     console.error(error);
     return res.status(500).send("internal server error");

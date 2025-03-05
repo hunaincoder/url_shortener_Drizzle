@@ -3,41 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>URL Shortener</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css"
+    />
+    <title>URL Shortener</title>
   </head>
   <body>
-    <%- include('./partials/header') %>
-    <% if(isLoggedIn) { %>
-    <h2>you are logged in </h2>
+    <%- include('./partials/header') %> <% if(user) { %>
+    <h2>you are logged in</h2>
     <% } else { %>
-    <h2>you are not loged in </h2>
+    <h2>you are not loged in</h2>
     <% }%>
-    <div class="container">
-      <h1>URL Shortener</h1>
-      <form action="/" method="post">
-        <div>
-          <label for="url">Enter URL:</label>
-          <input type="url" id="url" name="url" required />
+    <div class="main">
+      <section class="url-shortener">
+        <div class="container">
+          <div class="shortener-content">
+            <div class="shortener-form">
+              <h1 class="form-title">URL Shortener</h1>
+              <form action="/" method="post" class="url-form" id="url-form">
+                <div class="form-group">
+                  <label for="url">
+                    <i class="zmdi zmdi-link"></i>
+                  </label>
+                  <input
+                    type="url"
+                    name="url"
+                    id="url"
+                    placeholder="Enter URL"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="shortcode">
+                    <i class="zmdi zmdi-code"></i>
+                  </label>
+                  <input
+                    type="text"
+                    name="shortcode"
+                    id="shortcode"
+                    placeholder="Enter custom short code"
+                    required
+                  />
+                </div>
+                <div class="form-group form-button">
+                  <input
+                    type="submit"
+                    name="shorten"
+                    id="shorten"
+                    class="form-submit"
+                    value="Shorten"
+                  />
+                </div>
+              </form>
+            </div>
+            <div class="shortened-urls">
+              <h2 class="section-title">Shortened URLs</h2>
+              <% if(link && link.length > 0) { %>
+              <ul class="url-list">
+                <% link.map(({shortcode, url}) => { %> <% const truncatedUrl =
+                url.length >= 30 ? `${url.slice(0,30)}...` : url %>
+                <li class="url-item">
+                  <div class="url-info">
+                    <a
+                      href="/<%= shortcode %>"
+                      class="short-url"
+                      target="_blank"
+                    >
+                      <i class="zmdi zmdi-link"></i>
+                      <%= host %>/<%= shortcode %>
+                    </a>
+                    <span class="original-url"><%= truncatedUrl %></span>
+                  </div>
+                  <div class="url-actions">
+                    <button
+                      class="copy-btn"
+                      data-url="<%= host %>/<%= shortcode %>"
+                    >
+                      <i class="zmdi zmdi-copy"></i>
+                    </button>
+                  </div>
+                </li>
+                <% }) %>
+              </ul>
+              <% } else { %>
+              <p class="empty-list">
+                No shortened URLs yet. Create your first one above!
+              </p>
+              <% } %>
+            </div>
+          </div>
         </div>
-        <div>
-          <label for="Shortcode">Enter Shortcode:</label>
-          <input type="text" id="Shortcode" name="shortcode" required />
-        </div>
-        <button type="submit">Shorten</button>
-      </form>
-      <h2>Shorten URLs</h2>
-      <ul>
-        <% link.map(({shortcode, url}) => {%>
-          <% const truncatedURL = String(url).substring(0, 20) + '...' %>
-          <li>
-          <a href="/<%= shortcode %>" target="_blank">
-            <%= host %>/<%= shortcode %></a
-          >
-          -> <%= truncatedURL %>
-        </li>
-        <%})%>
-      </ul>
+      </section>
     </div>
 
     <!-- <script>
@@ -88,6 +146,5 @@
       fetchShortenedURL();
     </script> -->
     <%- include('./partials/footer') %>
-
   </body>
 </html>

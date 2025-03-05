@@ -33,6 +33,10 @@ export const comparePassword = async (password, hashedPassword) => {
 
 export const generateToken = ({ id, name, email }) => {
   return jwt.sign({ id, name, email }, process.env.JWT_SECRET, {
-    expiresIn: "30d"
+    expiresIn: "30d",
   });
+};
+
+export const verifyJWTToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
 };
