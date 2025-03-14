@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   date,
   int,
@@ -10,6 +11,9 @@ export const shortlinks = mysqlTable("short_links", {
   id: int().autoincrement().primaryKey(),
   url: varchar({ length: 255 }).notNull(),
   shortcode: varchar("shortcode", { length: 25 }).notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(), 
+  userID : int("user_id").notNull().references(()=> userTable.id),   //foreign key
 });
 
 export const userTable = mysqlTable("users", {
@@ -20,3 +24,15 @@ export const userTable = mysqlTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
 });
+
+
+export const usersRelation = relations(userTable , ({many}) => ({
+  shortlink : many(shortlinks) 
+}))
+
+export const shortlinksRelation = relations(shortlinks , ({one}) => ({
+  user : one(userTable , {
+    fields : [shortlinks.userID], //foreign key
+    references : [userTable.id]
+  })
+}))

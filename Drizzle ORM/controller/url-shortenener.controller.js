@@ -14,17 +14,19 @@ import {
 
 export const getShortenerPage = async (req, res) => {
   try {
-    console.log("User in getShortenerPage:", res.locals.user); // Debugging
+    if (!req.user) return res.redirect("/login");
 
     // const link = await loadLinks();
-    const link = await getAllShortLinks();
-
-      
+    const link = await getAllShortLinks(req.user.id);
 
     // let isLoggedIn = req.cookies.isLoggedIn;
 
     // const links = await urls.find();
-    return res.render("index", { link, host: req.hostname, user: res.locals.user });
+    return res.render("index", {
+      link,
+      host: req.hostname,
+      user: res.locals.user,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send("internal server error");
@@ -34,6 +36,7 @@ export const getShortenerPage = async (req, res) => {
 export const postURLShortener = async (req, res) => {
   try {
     // const link = await loadLinks();
+    if (!req.user) return res.redirect("/login");
 
     const { url, shortcode } = req.body;
     const finalShortCode = shortcode || crypto.randomBytes(4).toString("hex");
@@ -47,9 +50,13 @@ export const postURLShortener = async (req, res) => {
     }
     console.log("URL:", url);
     console.log("Shortcode:", finalShortCode);
-    await inserShortLink({ url, shortcode: finalShortCode });
+    await inserShortLink({
+      url,
+      shortcode: finalShortCode,
+      userId: req.user.id,
+    });
     // await urls.create({ url, shortcode });
-    return res.redirect("/");
+    return res.redirect("/shorten");
   } catch (error) {
     console.error(error);
   }

@@ -8,23 +8,28 @@ import {
 
 export const getRegisterPage = (req, res) => {
   if (req.user) return res.redirect("/shorten");
-  return res.render("auth/register");
+  return res.render("auth/register" , {errors : req.flash("errors")});
 };
 export const getLoginPage = (req, res) => {
   if (req.user) return res.redirect("/shorten");
 
-  return res.render("auth/login");
+  return res.render("auth/login" ,{errors : req.flash("errors")});
 };
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/shorten");
 
   const { email, password } = req.body;
   const user = await getUserByEmail(email);
-  if (!user) return res.redirect("/login");
-
+  if (!user) {
+    req.flash("errors" , "Invalid email or password");
+    return res.redirect("/login");
+  }
   const isPasswordValid = await comparePassword(password, user.password);
 
-  if (!isPasswordValid) return res.redirect("/login");
+  if (!isPasswordValid) {
+    req.flash("errors" , "Invalid email or password");
+    return res.redirect("/login");
+  }
   // res.setHeader("Set-Cookie" , "isLoggedIn=true; path=/;" )
   const token = generateToken({
     id: user.id,
@@ -41,7 +46,11 @@ export const postRegister = async (req, res) => {
 
   const { name, email, password } = req.body;
   const userExists = await getUserByEmail(email);
-  if (userExists) return res.redirect("/register");
+  // if (userExists) return res.redirect("/register");
+  if (userExists) {
+    req.flash("errors" , "user already exists");
+    return res.redirect("/register");
+  }
 
   const hashedPass = await hashPassword(password);
 
@@ -51,7 +60,7 @@ export const postRegister = async (req, res) => {
 
 export const getMe = (req, res) => {
   
-  if (!req.user) return req.send("not logged in");
+  if (!req.user) return res.send("not logged in");
   return res.send(`hey ${req.user.name}`);
 };
 
