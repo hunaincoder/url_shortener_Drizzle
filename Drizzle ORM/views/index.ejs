@@ -22,7 +22,12 @@
           <div class="shortener-content">
             <div class="shortener-form">
               <h1 class="form-title">URL Shortener</h1>
-              <form action="/shorten" method="post" class="url-form" id="url-form">
+              <form
+                action="/shorten"
+                method="post"
+                class="url-form"
+                id="url-form"
+              >
                 <div class="form-group">
                   <label for="url">
                     <i class="zmdi zmdi-link"></i>
@@ -47,6 +52,12 @@
                     required
                   />
                 </div>
+
+                <% if(errors && errors.length > 0) { %> <%
+                errors.forEach((error) => { %>
+                <p class="flash-error"><%= error %></p>
+                <% }) %> <% } %>
+
                 <div class="form-group form-button">
                   <input
                     type="submit"
@@ -62,8 +73,9 @@
               <h2 class="section-title">Shortened URLs</h2>
               <% if(link && link.length > 0) { %>
               <ul class="url-list">
-                <% link.map(({shortcode, url}) => { %> <% const truncatedUrl =
-                url.length >= 30 ? `${url.slice(0,30)}...` : url %>
+                <% link.map(({shortcode, url , id}) => { %> <% const
+                truncatedUrl = url.length >= 30 ? `${url.slice(0,30)}...` : url
+                %>
                 <li class="url-item">
                   <div class="url-info">
                     <a
@@ -82,6 +94,11 @@
                       data-url="<%= host %>/<%= shortcode %>"
                     >
                       <i class="zmdi zmdi-copy"></i>
+                    </button>
+                    <button class="copy-btn edit-btn">
+                      <a href="/shorten/edit/<%= id %>">
+                        <i class="zmdi zmdi-edit"></i>
+                      </a>
                     </button>
                   </div>
                 </li>

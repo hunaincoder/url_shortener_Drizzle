@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
+import { redirectToShortLink } from "./controller/url-shortenener.controller.js";
+
 
 // import { connectDB } from "./config/db-client.js";
 const app = express();
@@ -40,6 +42,9 @@ app.use((req, res, next) => {
 
 app.use("/shorten", shortenerRoutes);
 app.use("/", authRoutes);
+
+app.get('/:shortcode', redirectToShortLink);
+
 
 try {
   // await connectDB();
