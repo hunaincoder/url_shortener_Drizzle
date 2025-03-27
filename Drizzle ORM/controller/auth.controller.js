@@ -5,7 +5,10 @@ import {
   getUserByEmail,
   hashPassword,
 } from "../services/auth.services.js";
-import { loginUserSchema, registerUserSchema } from "../validators/auth-validators.js";
+import {
+  loginUserSchema,
+  registerUserSchema,
+} from "../validators/auth-validators.js";
 
 export const getRegisterPage = (req, res) => {
   if (req.user) return res.redirect("/shorten");
@@ -19,8 +22,6 @@ export const getLoginPage = (req, res) => {
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/shorten");
 
-  if (req.user) return res.redirect("/shorten");
-
   const { data, error } = loginUserSchema.safeParse(req.body);
   console.log(data);
 
@@ -30,7 +31,8 @@ export const postLogin = async (req, res) => {
     return res.redirect("/login");
   }
 
-  const { name, email, password } = data;  const user = await getUserByEmail(email);
+  const { name, email, password } = data;
+  const user = await getUserByEmail(email);
   if (!user) {
     req.flash("errors", "Invalid email or password");
     return res.redirect("/login");

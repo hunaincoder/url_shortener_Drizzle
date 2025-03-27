@@ -6,6 +6,7 @@ import {
   redirectToShortLink,
   getShortenerEditPage,
   postShortenerEditPage,
+  deleteShortCode,
 } from "../controller/url-shortenener.controller.js";
 
 const router = express.Router();
@@ -16,6 +17,8 @@ router.post("/", postURLShortener);
 
 router.get("/:shortcode", redirectToShortLink);
 
-router.route("/edit/:id").get(getShortenerEditPage).post(postShortenerEditPage)
+router.route("/edit/:id").get(getShortenerEditPage).post(postShortenerEditPage);
+
+router.route("/delete/:id").post(deleteShortCode);
 
 export const shortenerRoutes = router;

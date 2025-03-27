@@ -5,6 +5,7 @@ import {
   getShortLinksByShortCode,
   insertShortLink,
   updateShortCode,
+  deleteShortCodeById,
 } from "../services/shortener.services.js";
 
 import z from "zod";
@@ -122,10 +123,25 @@ export const postShortenerEditPage = async (req, res) => {
     }
     res.redirect("/shorten");
   } catch (error) {
-    if(error.code === "ER_DUP_ENTRY"){
+    if (error.code === "ER_DUP_ENTRY") {
       req.flash("errors", "Shortcode already exists");
       return res.redirect(`/shorten/edit/${id}`);
     }
+    console.error(error);
+    return res.status(500).send("internal server error");
+  }
+};
+
+export const deleteShortCode = async (req, res) => {
+  try {
+    const { data: id, error } = z.coerce
+      .number()
+      .int()
+      .safeParse(req.params.id);
+    if (error) return res.redirect("/404");
+    await deleteShortCodeById(id);
+    return res.redirect("/shorten");
+  } catch (error) {
     console.error(error);
     return res.status(500).send("internal server error");
   }

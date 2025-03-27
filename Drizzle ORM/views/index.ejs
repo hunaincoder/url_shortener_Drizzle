@@ -100,6 +100,11 @@
                         <i class="zmdi zmdi-edit"></i>
                       </a>
                     </button>
+                    <form action="/shorten/delete/<%= id %>" method="post">
+                      <button class="copy-btn edit-btn">
+                        <i class="zmdi zmdi-delete"></i>
+                      </button>
+                    </form>
                   </div>
                 </li>
                 <% }) %>
