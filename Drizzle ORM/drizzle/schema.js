@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   date,
   int,
   mysqlTable,
@@ -12,8 +13,21 @@ export const shortlinks = mysqlTable("short_links", {
   url: varchar({ length: 255 }).notNull(),
   shortcode: varchar("shortcode", { length: 25 }).notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(), 
-  userID : int("user_id").notNull().references(()=> userTable.id),   //foreign key
+  updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
+  userID: int("user_id")
+    .notNull()
+    .references(() => userTable.id),
+});
+
+export const sessionTable = mysqlTable("sessions", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  valid: boolean().notNull().default(true),
+  ip: varchar({ length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
 });
 
 export const userTable = mysqlTable("users", {
@@ -25,14 +39,21 @@ export const userTable = mysqlTable("users", {
   updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
 });
 
+export const usersRelation = relations(userTable, ({ many }) => ({
+  shortlink: many(shortlinks),
+  session : many(sessionTable)
+}));
 
-export const usersRelation = relations(userTable , ({many}) => ({
-  shortlink : many(shortlinks) 
-}))
+export const shortlinksRelation = relations(shortlinks, ({ one }) => ({
+  user: one(userTable, {
+    fields: [shortlinks.userID],
+    references: [userTable.id],
+  }),
+}));
 
-export const shortlinksRelation = relations(shortlinks , ({one}) => ({
-  user : one(userTable , {
-    fields : [shortlinks.userID], //foreign key
-    references : [userTable.id]
-  })
-}))
+export const sessionRelation = relations(sessionTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [sessionTable.userId],
+    references: [userTable.id],
+  }),
+}));

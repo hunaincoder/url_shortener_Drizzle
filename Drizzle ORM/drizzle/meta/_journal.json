@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1740686123630,
-      "tag": "0000_sharp_war_machine",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1740838139429,
-      "tag": "0001_cuddly_snowbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1740866166165,
-      "tag": "0002_heavy_shocker",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1740867229892,
-      "tag": "0003_tiny_norman_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1740867338891,
-      "tag": "0004_military_mimic",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1740867541284,
-      "tag": "0005_huge_captain_america",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1741949256569,
-      "tag": "0006_awesome_fat_cobra",
+      "when": 1743174736874,
+      "tag": "0000_silent_timeslip",
       "breakpoints": true
     }
   ]
