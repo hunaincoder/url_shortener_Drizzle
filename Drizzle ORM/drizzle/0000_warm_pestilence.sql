@@ -3,6 +3,7 @@ CREATE TABLE `sessions` (
 	`user_id` int NOT NULL,
 	`valid` boolean NOT NULL DEFAULT true,
 	`ip` varchar(255) NOT NULL,
+	`user_agent` text,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `sessions_id` PRIMARY KEY(`id`)

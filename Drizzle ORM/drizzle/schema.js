@@ -4,6 +4,7 @@ import {
   date,
   int,
   mysqlTable,
+  text,
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -26,6 +27,7 @@ export const sessionTable = mysqlTable("sessions", {
     .references(() => userTable.id, { onDelete: "cascade" }),
   valid: boolean().notNull().default(true),
   ip: varchar({ length: 255 }).notNull(),
+  userAgent: text("user_agent"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
 });
@@ -41,7 +43,7 @@ export const userTable = mysqlTable("users", {
 
 export const usersRelation = relations(userTable, ({ many }) => ({
   shortlink: many(shortlinks),
-  session : many(sessionTable)
+  session: many(sessionTable),
 }));
 
 export const shortlinksRelation = relations(shortlinks, ({ one }) => ({
