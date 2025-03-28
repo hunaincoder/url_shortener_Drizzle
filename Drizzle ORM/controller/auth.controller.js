@@ -1,7 +1,14 @@
 import {
+  ACCESS_TOKEN_EXPIRY,
+  REFRESH_TOKEN_EXPIRY,
+} from "../config/constants.js";
+import {
   comparePassword,
+  createAccessToken,
+  createRefreshToken,
+  CreateSession,
   createUser,
-  generateToken,
+  // generateToken,
   getUserByEmail,
   hashPassword,
 } from "../services/auth.services.js";
@@ -43,13 +50,38 @@ export const postLogin = async (req, res) => {
     req.flash("errors", "Invalid email or password");
     return res.redirect("/login");
   }
-  const token = generateToken({
+  // const token = generateToken({
+  //   id: user.id,
+  //   name: user.name,
+  //   email: user.email,
+  // });
+  // res.cookie("access_token", token);
+
+  const session = await CreateSession(user.id, {
+    ip: req.clientIp,
+    userAgent: req.headers["user-agent"],
+  });
+
+  const accessToken = createAccessToken({
     id: user.id,
     name: user.name,
     email: user.email,
+    sessionId: session.id,
   });
-  res.cookie("access_token", token);
 
+  const refreshToken = createRefreshToken(session.id);
+
+  const baseConfig = { httpOnly: true, secure: true };
+
+  res.cookie("access_token", accessToken, {
+    ...baseConfig,
+    maxAge: ACCESS_TOKEN_EXPIRY,
+  });
+
+  res.cookie("refresh_token", refreshToken, {
+    ...baseConfig,
+    maxAge: REFRESH_TOKEN_EXPIRY,
+  });
   res.redirect("/shorten");
 };
 
