@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "../config/db.js";
-import { sessionTable, userTable } from "../drizzle/schema.js";
+import { sessionTable, shortlinks, userTable } from "../drizzle/schema.js";
 // import bcrypt from "bcrypt"
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
@@ -119,3 +119,15 @@ export const refreshTokens = async (refreshToken) => {
     throw error;
   }
 };
+
+export const clearUserSession = async (sessionId) => {
+  return db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+};
+
+export const getAllShortLinks = async (userId) => {
+  return await db
+    .select()
+    .from(shortlinks)
+    .where(eq(shortlinks.userID, userId));
+};
+ 

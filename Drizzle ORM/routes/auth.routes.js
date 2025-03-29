@@ -10,6 +10,8 @@ router.route("/login").get(authControllers.getLoginPage).post(authControllers.po
 
 router.route("/me").get(authControllers.getMe)
 
+router.route("/profile").get(authControllers.getProfilePage)
+
 router.route("/logout").get(authControllers.logoutUser)
 
 

@@ -3,11 +3,14 @@ import {
   REFRESH_TOKEN_EXPIRY,
 } from "../config/constants.js";
 import {
+  clearUserSession,
   comparePassword,
   createAccessToken,
   createRefreshToken,
   CreateSession,
   createUser,
+  findUserById,
+  getAllShortLinks,
   // generateToken,
   getUserByEmail,
   hashPassword,
@@ -116,7 +119,26 @@ export const getMe = (req, res) => {
   return res.send(`hey ${req.user.name}`);
 };
 
-export const logoutUser = (req, res) => {
+export const getProfilePage = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+  const user = await findUserById(req.user.id);
+  const userShortLinks = await getAllShortLinks(user.id);
+
+  return res.render("auth/profile", {
+    user: {
+      name: user.name,
+      email: user.email,
+      links: userShortLinks,
+      createdAt: user.createdAt,
+      id: user.id,
+    },
+  });
+};
+
+export const logoutUser = async (req, res) => {
+  await clearUserSession(req.user.sessionId);
+
   res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
   return res.redirect("/login");
 };
