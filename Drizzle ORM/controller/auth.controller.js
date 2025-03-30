@@ -144,3 +144,12 @@ export const logoutUser = async (req, res) => {
   res.clearCookie("refresh_token");
   return res.redirect("/login");
 };
+
+export const getVerifyEmailPage = async (req, res) => {
+  if (!req.user) return res.redirect("/shorten");
+  const user = await findUserById(req.user.id);
+
+  if (!user || user.isEmailValid) res.redirect("/shorten");
+
+  return res.render("auth/verify-email", { email: req.user.email });
+};
