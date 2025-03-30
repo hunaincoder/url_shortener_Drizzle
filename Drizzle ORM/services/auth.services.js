@@ -103,6 +103,7 @@ export const refreshTokens = async (refreshToken) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      isEmailValid: user.isEmailValid,  
       sessionId: currentSession.id,
     };
 
@@ -130,4 +131,3 @@ export const getAllShortLinks = async (userId) => {
     .from(shortlinks)
     .where(eq(shortlinks.userID, userId));
 };
- 

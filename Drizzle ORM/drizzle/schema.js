@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -37,8 +37,21 @@ export const userTable = mysqlTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).unique().notNull(),
   password: varchar({ length: 255 }).notNull(),
+  isEmailValid: boolean("is_email_valid").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
+});
+
+export const verifyEmailTokensTable = mysqlTable("is_email_valid", {
+  id: int().autoincrement().primaryKey(),
+  userId: int()
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  token: varchar({ length: 8 }).notNull(),
+  expiresAt: timestamp("expires_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const usersRelation = relations(userTable, ({ many }) => ({

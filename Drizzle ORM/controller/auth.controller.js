@@ -69,6 +69,7 @@ export const postLogin = async (req, res) => {
     id: user.id,
     name: user.name,
     email: user.email,
+    isEmailVaild: false,
     sessionId: session.id,
   });
 
@@ -129,6 +130,7 @@ export const getProfilePage = async (req, res) => {
       name: user.name,
       email: user.email,
       links: userShortLinks,
+      isEmailVaild: user.isEmailValid,
       createdAt: user.createdAt,
       id: user.id,
     },
