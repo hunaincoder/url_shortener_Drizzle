@@ -145,15 +145,28 @@ export const generateRandonToken = (digit = 8) => {
 };
 
 export const insertVerifyEmailToken = async ({ userId, token }) => {
-  await db
-    .delete(verifyEmailTokensTable)
-    .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
+  return db.transaction(async (tx) => {
+    try {
+      await tx
+        .delete(verifyEmailTokensTable)
+        .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
 
-  await db.insert(verifyEmailTokensTable).values({ userId, token });
+      await tx
+        .delete(verifyEmailTokensTable)
+        .where(eq(verifyEmailTokensTable.userId, userId));
+
+      await tx.insert(verifyEmailTokensTable).values({ userId, token });
+    } catch (error) {
+      console.error("failed to insert verification token ", error);
+      throw new Error("unable to create verification token");
+    }
+  });
 };
 
 export const createVerifylEmailLink = ({ email, token }) => {
-  const encodedURIEmail = encodeURIComponent(email);
-  return `http://localhost:3000/verify-email-token/?token=${token}&email=${encodedURIEmail}`;
+  const url = new URL("http://localhost:3000/verify-email-token");
+  url.searchParams.append("token", token);
+  url.searchParams.append("email", email);
+  
+  return url.toString();
 };
-
