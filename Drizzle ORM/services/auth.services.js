@@ -156,3 +156,4 @@ export const createVerifylEmailLink = ({ email, token }) => {
   const encodedURIEmail = encodeURIComponent(email);
   return `http://localhost:3000/verify-email-token/?token=${token}&email=${encodedURIEmail}`;
 };
+
