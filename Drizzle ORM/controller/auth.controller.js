@@ -5,6 +5,7 @@ import {
 } from "../config/constants.js";
 import {
   clearUserSession,
+  clearVerifyEmailTokens,
   comparePassword,
   createAccessToken,
   createRefreshToken,
@@ -12,16 +13,19 @@ import {
   createUser,
   createVerifylEmailLink,
   findUserById,
+  findVerificationEmailToken,
   generateRandonToken,
   getAllShortLinks,
   // generateToken,
   getUserByEmail,
   hashPassword,
   insertVerifyEmailToken,
+  verifyUserEmailAndUpdate,
 } from "../services/auth.services.js";
 import {
   loginUserSchema,
   registerUserSchema,
+  verifyEmailSchema,
 } from "../validators/auth-validators.js";
 
 export const getRegisterPage = (req, res) => {
@@ -134,7 +138,7 @@ export const getProfilePage = async (req, res) => {
       name: user.name,
       email: user.email,
       links: userShortLinks,
-      isEmailVaild: user.isEmailValid,
+      isEmailValid: user.isEmailValid,
       createdAt: user.createdAt,
       id: user.id,
     },
@@ -167,7 +171,7 @@ export const resendVerificationLink = async (req, res) => {
 
   await insertVerifyEmailToken({ userId: req.user.id, token: randomToken });
 
-  const verifyEmailLink = await createVerifylEmailLink({
+  const verifyEmailLink = createVerifylEmailLink({
     email: req.user.email,
     token: randomToken,
   });
@@ -181,4 +185,26 @@ export const resendVerificationLink = async (req, res) => {
   }).catch(console.error);
 
   res.redirect("/verify-email");
+};
+
+export const verifyEmailToken = async (req, res) => {
+  const { data, error } = verifyEmailSchema.safeParse(req.query);
+  if (error) {
+    return res.send("verification link invalid or expired!!");
+  }
+
+  const token = await findVerificationEmailToken(data);
+  console.log("verifyEmailToken = ", token);
+
+  if (!token) {
+    return res.send("verification link invalid or expired!!");
+  }
+
+  await verifyUserEmailAndUpdate(token.email);
+  await clearVerifyEmailTokens(token.email);
+
+  const updatedUser = await findUserById(req.user.id);
+  req.user.isEmailValid = updatedUser.isEmailValid;
+
+  return res.redirect("/profile");
 };
