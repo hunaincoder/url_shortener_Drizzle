@@ -171,38 +171,59 @@ export const createVerifylEmailLink = ({ email, token }) => {
   return url.toString();
 };
 
+//without joins
+// export const findVerificationEmailToken = async ({ token, email }) => {
+//   const [tokenData] = await db
+//     .select()
+//     .from(verifyEmailTokensTable)
+//     .where(
+//       and(
+//         eq(verifyEmailTokensTable.token, token),
+//         gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
+//       )
+//     )
+//     .limit(1);
+
+//   if (!tokenData) {
+//     return null;
+//   }
+
+//   const [user] = await db
+//     .select()
+//     .from(userTable)
+//     .where(and(eq(userTable.id, tokenData.userId), eq(userTable.email, email)))
+//     .limit(1);
+
+//   if (!user) {
+//     return null;
+//   }
+
+//   return {
+//     userId: user.id,
+//     email: user.email,
+//     token: tokenData.token,
+//     expiresAt: tokenData.expiresAt,
+//   };
+// };
+
+//with joins
 export const findVerificationEmailToken = async ({ token, email }) => {
-  const [tokenData] = await db
-    .select()
+  return await db
+    .select({
+      userId: userTable.id,
+      email: userTable.email,
+      token: verifyEmailTokensTable.token,
+      expiresAt: verifyEmailTokensTable.expiresAt,
+    })
     .from(verifyEmailTokensTable)
     .where(
       and(
         eq(verifyEmailTokensTable.token, token),
-        gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
+        gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`),
+        eq(userTable.email, email)
       )
     )
-    .limit(1);
-
-  if (!tokenData) {
-    return null;
-  }
-
-  const [user] = await db
-    .select()
-    .from(userTable)
-    .where(and(eq(userTable.id, tokenData.userId), eq(userTable.email, email)))
-    .limit(1);
-
-  if (!user) {
-    return null;
-  }
-
-  return {
-    userId: user.id,
-    email: user.email,
-    token: tokenData.token,
-    expiresAt: tokenData.expiresAt,
-  };
+    .innerJoin(userTable, eq(verifyEmailTokensTable.userId, userTable.id));
 };
 
 export const verifyUserEmailAndUpdate = async (email) => {
